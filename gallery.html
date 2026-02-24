@@ -1,0 +1,299 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FixMyCity – Complaints</title>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #E7F2EF;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background: #dce1ea;
+      color: rgb(14, 12, 12);
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      gap: 10px;
+      height: 70px;
+      overflow: hidden;
+    }
+    header .logo { height: 60px; width: auto; }
+
+    .header-buttons {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .header-buttons a {
+      background: white;
+      color: #000000;
+      padding: 10px 14px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .header-buttons a:hover { background: #90e0ef; }
+
+    .logout-btn {
+      background: #19183B!important;
+      color: #fff !important;
+    }
+    .logout-btn:hover {
+      background: #88cce7 !important;
+    }
+
+    /* Slideshow */
+    .slideshow { max-width: 100%; height: 350px; position: relative; overflow: hidden; margin: 0 auto 0 auto; }
+    .slides { display: none; width: 100%; height: 350px; object-fit: fill; }
+    .fade { animation: fadeEffect 1.5s; }
+    @keyframes fadeEffect { from {opacity: 0.4;} to {opacity: 1;} }
+
+    /* Moving text slide */
+    .text-slide {
+      background: #dce1ea;
+      color: black;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 0;
+      text-align: center;
+    }
+    .text-slide marquee {
+      font-family: Arial, sans-serif;
+      letter-spacing: 1px;
+    }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    .location {
+      background: #c79d14;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .card img { width: 100%; height: 200px; object-fit: cover; }
+    .desc { padding: 10px; font-size: 14px; }
+    .meta { padding: 0 10px 10px; font-size: 12px; color: #777; }
+    .empty { text-align: center; margin-top: 50px; font-size: 18px; }
+
+    /* Upvote button */
+    .upvote {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 10px;
+      cursor: pointer;
+      color: #555;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .upvote i {
+      color: #888;
+      font-size: 18px;
+      transition: 0.2s;
+    }
+    .upvote.liked i { color: #e63946; }
+    .upvote:hover i { transform: scale(1.2); }
+
+    /* Footer */
+    footer { background: #dce1ea; color: #160c0c; padding: 20px 0; }
+    .footer_container { display: flex; justify-content: space-around; max-width: 1200px; margin: auto; padding: 0 20px; gap: 20px; }
+    .footer_logo img { width: 80px; }
+    .link_lists h3, .news_letter h3 { margin-bottom: 10px; }
+    .link_lists ul { list-style: none; padding: 0; }
+    .link_lists ul li { margin-bottom: 6px; cursor: pointer; }
+    .link_lists ul li:hover { text-decoration: underline; }
+    .news_letter input { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px; border: none; }
+    .icon_container { display: flex; gap: 10px; margin-top: 10px; }
+    .icon a { color: white; font-size: 20px; transition: color 0.3s; }
+    .icon a:hover { color: #1d4ed8; }
+
+    @media (max-width: 992px) {
+      .footer_container { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="{{ url_for('static', filename='logo1.webp') }}" alt="Logo" class="logo">
+    FixMyCity – All Complaints
+    <div class="header-buttons">
+      <a href="{{ url_for('new_complaint') }}">+ New Complaint</a>
+      <a href="{{ url_for('login') }}" class="logout-btn">Logout</a>
+    </div>
+  </header>
+
+  <!-- Slideshow Section -->
+  <div class="slideshow">
+    <img class="slides fade" src="{{ url_for('static', filename='sld1.jpg') }}" alt="Slide 1">
+    <img class="slides fade" src="{{ url_for('static', filename='sld2.jpg') }}" alt="Slide 2">
+    <img class="slides fade" src="{{ url_for('static', filename='sld3.jpg') }}" alt="Slide 3">
+  </div>
+
+  <!-- Text Slide -->
+  <div class="text-slide">
+    <marquee behavior="scroll" direction="left" scrollamount="6">
+      🚨 Welcome to FixMyCity! Report your complaints and help us improve our community. 
+      | 🏙️ Together we build a better city! 
+      | 📌 New features coming soon – Stay tuned!
+    </marquee>
+  </div>
+
+  <!-- Gallery Section -->
+  {% if complaints %}
+    <div class="gallery">
+      {% for id, name, coords, state, city, address, pincode, description, image_path, created_at in complaints %}
+        <div class="card">
+          <div class="location">{{ city }}, {{ state }}</div>
+          {% if image_path %}
+            <img src="{{ url_for('static', filename=image_path) }}" alt="Complaint Image">
+          {% endif %}
+          <div class="desc">{{ description }}</div>
+          <div class="meta">
+            Add: {{ address }}, {{ pincode }} <br>
+            Loc: {{ coords }} <br>
+          </div>
+
+          <!-- Upvote button -->
+          <div class="upvote" onclick="toggleUpvote(this)">
+            <i class="fas fa-thumbs-up"></i> <span class="count">0</span>
+          </div>
+
+          <!-- Delete button -->
+          <form action="{{ url_for('delete_complaint', complaint_id=id) }}" method="POST" style="margin:10px;">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this complaint?')">
+               DELETE
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">🚫 No complaints yet. Be the first to report!</p>
+  {% endif %}
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer_container">
+      <div class="footer_logo">
+        <img src="{{ url_for('static', filename='logo1.webp') }}" alt="logo">
+      </div>
+      <div class="link_lists">
+        <h3>Main Links</h3>
+        <ul>
+          <li>Tracking Complaint</li>
+          <li>New Complaint</li>
+          <li>Contact Us</li>
+          <li>News & Blogs</li>
+        </ul>
+      </div>
+      <div class="link_lists">
+        <h3>Support</h3>
+        <ul>
+          <li>About Us</li>
+          <li>Privacy Policy</li>
+          <li>Terms & Conditions</li>
+        </ul>
+      </div>
+      <div class="news_letter">
+        <h3>Newsletter</h3>
+        <input type="email" placeholder="Enter your Email...">
+        <h3>Follow Us</h3>
+        <div class="icon_container">
+          <div class="icon">
+            <a href="https://www.linkedin.com" target="_blank">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </div>
+          <div class="icon">
+            <a href="https://twitter.com/mygovindia/" target="_blank">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </div>
+          <div class="icon">
+            <a href="https://www.instagram.com/k.nitin007_" target="_blank">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+          <div class="icon">
+            <a href="https://www.youtube.com/@MyGovIndia?sub_confirmation=1" target="_blank">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Success Popup + Slideshow + Upvote Script -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("success")) {
+      alert("✅ Complaint registered successfully!");
+    }
+
+    // Slideshow script
+    let slideIndex = 0;
+    showSlides();
+    function showSlides() {
+      let i;
+      let slides = document.getElementsByClassName("slides");
+      for (i = 0; i < slides.length; i++) { slides[i].style.display = "none"; }
+      slideIndex++;
+      if (slideIndex > slides.length) {slideIndex = 1}    
+      slides[slideIndex-1].style.display = "block";  
+      setTimeout(showSlides, 3000);
+    }
+
+    // Upvote button script
+    function toggleUpvote(el) {
+      const countEl = el.querySelector(".count");
+      let count = parseInt(countEl.innerText);
+      if (el.classList.contains("liked")) {
+        count--; // unlike
+        el.classList.remove("liked");
+      } else {
+        count++; // like
+        el.classList.add("liked");
+      }
+      countEl.innerText = count;
+    }
+  </script>
+
+</body>
+</html>

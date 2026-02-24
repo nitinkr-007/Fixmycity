@@ -1,0 +1,130 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FixMyCity – Register Complaint</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f9; }
+    h2 { color: #4f8bb0; text-align: center; padding: 20px; }
+    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 900px; margin: 20px auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
+    button { background: #4f8bb0; color: #fff; font-weight: bold; border: none; cursor: pointer; margin-top: 15px; font-size: 16px; padding: 12px; }
+    button:hover { background: #204dbd; }
+    #popup {
+      display:none; 
+      position:fixed; 
+      top:20px; right:20px;
+      background:#4BB543; 
+      color:white; 
+      padding:12px 18px; 
+      border-radius:8px;
+      font-size:16px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.3);
+      z-index:1000;
+    }
+    #map { height: 400px; width: 100%; margin-top: 10px; border-radius: 8px; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+
+  <h2>Register a New Complaint</h2>
+  <form action="{{ url_for('submit_complaint') }}" method="POST" enctype="multipart/form-data">
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <!-- Map input for coordinates -->
+    <label for="coords">Coordinates (lat, lng):</label>
+    <input type="text" id="coords" name="coords" placeholder="Click map to autofill" required>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- State Dropdown -->
+    <label for="state">State:</label>
+    <select id="state" name="state" required>
+      <option value="">-- Select State --</option>
+      <option value="Uttar Pradesh">Uttar Pradesh</option>
+      <option value="Delhi">Delhi</option>
+      <option value="Maharashtra">Maharashtra</option>
+      <option value="Karnataka">Karnataka</option>
+    </select>
+
+    <!-- District Dropdown -->
+    <label for="city">District / City:</label>
+    <select id="city" name="city" required>
+      <option value="">-- Select District --</option>
+    </select>
+
+    <label for="address">Full Address:</label>
+    <textarea id="address" name="address" rows="3" required></textarea>
+
+    <label for="pincode">Pincode:</label>
+    <input type="number" id="pincode" name="pincode" required>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" rows="3" required></textarea>
+
+    <label for="image">Upload Image:</label>
+    <input type="file" id="image" name="image">
+
+    <button type="submit">Submit Complaint</button>
+  </form>
+
+  <!-- Success Popup -->
+  <div id="popup">✅ Complaint registered successfully!</div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Popup success message
+    window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("success") === "1") {
+        const popup = document.getElementById("popup");
+        popup.style.display = "block";
+        setTimeout(() => { popup.style.display = "none"; }, 3000);
+      }
+    };
+
+    // Map
+    var map = L.map('map').setView([28.6139, 77.2090], 12); // default Delhi
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker;
+    map.on('click', function(e) {
+      var latlng = e.latlng.lat.toFixed(6) + ", " + e.latlng.lng.toFixed(6);
+      document.getElementById("coords").value = latlng;
+
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+    });
+
+    // State to District Mapping
+    const stateDistricts = {
+      "Uttar Pradesh": ["Lucknow", "Kanpur","Meerut","Noida", "Varanasi", "Agra", "Prayagraj"],
+      "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi"],
+      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad"],
+      "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubli", "Belagavi"],
+      "Jharkhand": ["Ranchi","Dhanbad","Jamshedpur","Dumka"]
+    };
+
+    const stateSelect = document.getElementById("state");
+    const citySelect = document.getElementById("city");
+
+    stateSelect.addEventListener("change", function() {
+      const districts = stateDistricts[this.value] || [];
+      citySelect.innerHTML = "<option value=''>-- Select District --</option>";
+      districts.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        citySelect.appendChild(opt);
+      });
+    });
+  </script>
+</body>
+</html>
